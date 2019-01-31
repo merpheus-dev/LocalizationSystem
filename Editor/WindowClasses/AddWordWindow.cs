@@ -13,7 +13,17 @@ namespace Subtegral.Localization.EditorScripts
         public void Draw(LocalizationManager manager)
         {
             word = EditorGUILayout.TextField("Word:", word);
-
+            if (GUILayout.Button("ADD"))
+            {
+               if(!manager.AddWord(word))
+                {
+                    EditorUtility.DisplayDialog("Keyword Exists", "This keyword already exists", "OK");
+                }
+                else
+                {
+                    EditorUtility.SetDirty(manager);
+                }
+            }
         }
     }
 }

@@ -6,16 +6,31 @@ namespace Subtegral.Localization.Controller
 {
     public class LocalizationManager : ScriptableObject
     {
+        [SerializeField]
         private List<LocalizationDict> localizationDicts = new List<LocalizationDict>();
+
+        [SerializeField]
+        private List<bool> keyFoldOutData = new List<bool>();
 
         public List<Language> localizationLangs = new List<Language>();
 
         #region Language Methods
-        public bool AddLanguage(string name,Sprite icon)
+        public bool AddLanguage(string name, Sprite icon)
         {
-            if (localizationLangs.Exists((x)=>x.Name==name))
+            if (localizationLangs.Exists((x) => x.Name == name))
                 return false;
-            localizationLangs.Add(new Language(name,icon));
+            localizationLangs.Add(new Language(name, icon));
+            return true;
+        }
+
+        public bool AddWord(string keyWord)
+        {
+            if (localizationDicts.Exists((x) => x.Key == keyWord))
+                return false;
+            localizationDicts.Add(new LocalizationDict()
+            {
+                Key = keyWord
+            });
             return true;
         }
         #endregion
@@ -30,9 +45,36 @@ namespace Subtegral.Localization.Controller
         {
             return localizationDicts.Select((x => x.Key)).ToArray();
         }
-        public Dictionary<Language,string> FetchFromKey(string key)
+
+        public bool[] FetchFoldOutList()
         {
-           return localizationDicts.Find((x) => x.Key == key).Values;
+            if (keyFoldOutData.Count != localizationDicts.Count)
+            {
+                keyFoldOutData = new List<bool>();
+                for (int i = 0; i < localizationDicts.Count; i++)
+                {
+                    keyFoldOutData.Add(false);
+                }
+            }
+            return keyFoldOutData.ToArray();
+        }
+
+        public void SerializeFoldOutChanges(int index, bool value)
+        {
+            if (keyFoldOutData.Count - 1 < index)
+                FetchFoldOutList();
+            keyFoldOutData[index] = value;
+        }
+
+        public Dictionary<Language, string> FetchFromKey(string key)
+        {
+            LocalizationDict dict = localizationDicts.Find((x) => x.Key == key);
+            foreach (var perLang in localizationLangs)
+            {
+                if (!dict.Values.ContainsKey(perLang))
+                    dict.AddWord(perLang, string.Empty);
+            }
+            return dict.Values;
         }
         #endregion
     }

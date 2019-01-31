@@ -10,6 +10,7 @@ namespace Subtegral.Localization.EditorScripts
 {
     public class LocalizationEditor : EditorWindow
     {
+        int currentTab = 0;
         [MenuItem("Localization/Editor")]
         public static void OpenWindow()
         {
@@ -48,9 +49,17 @@ namespace Subtegral.Localization.EditorScripts
         private void OnGUI()
         {
             WaitForReordableListSpritePickCommands();
+            currentTab = GUILayout.Toolbar(currentTab, new string[] { "Language Controls", "Key Words" });
             EditorGUILayout.BeginVertical();
-            DrawLanguageUI();
-            DrawWordUI();
+            switch (currentTab)
+            {
+                case 0:
+                    DrawLanguageUI();
+                    break;
+                case 1:
+                    DrawWordUI();
+                    break;
+            }
             EditorGUILayout.EndVertical();
         }
 
@@ -65,9 +74,29 @@ namespace Subtegral.Localization.EditorScripts
             }
 
             EditorGUILayout.EndHorizontal();
-            foreach (var oneKey in manager.FetchKeyList())
+
+            for (var i = 0; i < manager.FetchKeyList().Length; i++)
             {
-                EditorGUILayout.LabelField(oneKey);
+                manager.SerializeFoldOutChanges(i, EditorGUILayout.Foldout(manager.FetchFoldOutList()[i], manager.FetchKeyList()[i]));
+                if (manager.FetchFoldOutList()[i])
+                {
+                    var langValues = manager.FetchFromKey(manager.FetchKeyList()[i]);
+                    foreach (var perLang in langValues)
+                    {
+                        EditorGUILayout.BeginHorizontal(EditorStyles.helpBox);
+                        EditorGUILayout.LabelField(perLang.Key.Name);
+                        if (string.IsNullOrWhiteSpace(perLang.Value))
+                        {
+                            EditorGUILayout.LabelField("Uses Original Keyword", EditorStyles.centeredGreyMiniLabel);
+                        }
+                        else
+                        {
+                            EditorGUILayout.TextField(perLang.Value);
+                        }
+                        EditorGUILayout.EndHorizontal();
+
+                    }
+                }
             }
         }
 
