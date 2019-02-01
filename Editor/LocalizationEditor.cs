@@ -6,11 +6,16 @@ using Subtegral.Localization.Controller;
 using System.IO;
 using UnityEditorInternal;
 using System.Linq;
+using UnityEditor.IMGUI;
+using UnityEditor.IMGUI.Controls;
+using UnityEditor.AdvancedDropdown;
 namespace Subtegral.Localization.EditorScripts
 {
     public class LocalizationEditor : EditorWindow
     {
         int currentTab = 0;
+
+        SearchField searchableEditor;
         [MenuItem("Localization/Editor")]
         public static void OpenWindow()
         {
@@ -37,6 +42,7 @@ namespace Subtegral.Localization.EditorScripts
         {
             CreateLanguageReordableList();
             RegisterReordableListCallbacks();
+            searchableEditor = new SearchField();
         }
 
 
@@ -62,21 +68,37 @@ namespace Subtegral.Localization.EditorScripts
             }
             EditorGUILayout.EndVertical();
         }
-
+       
         #region GUI Drawers
         private void DrawWordUI()
         {
             EditorGUILayout.BeginHorizontal(EditorStyles.helpBox);
-            if (GUILayout.Button("NEW WORD"))
+            if (GUILayout.Button("New Keyword"))
             {
                 dataWindow = GetWindow<LocalizationDataWindow>("Add Word");
                 dataWindow.SetWindowMode(WindowMode.AddWord);
             }
 
-            EditorGUILayout.EndHorizontal();
+            if (GUILayout.Button("Search"))
+            {
+                showSearchScreen ^= true;
+            }
 
+            EditorGUILayout.EndHorizontal();
+            if (showSearchScreen)
+            {
+                //var rect = GUILayoutUtility.GetRect(1, 200, 18, 18, GUILayout.ExpandWidth(false));
+                EditorGUILayout.BeginHorizontal();
+                GUILayout.FlexibleSpace();
+                //rect.x += 20f;
+                searchParameter = searchableEditor.OnToolbarGUI(searchParameter);
+                GUILayout.FlexibleSpace();
+                EditorGUILayout.EndHorizontal();
+            }
             for (var i = 0; i < manager.FetchKeyList().Length; i++)
             {
+                if (!manager.FetchKeyList()[i].Contains(searchParameter))
+                    continue;
                 manager.SerializeFoldOutChanges(i, EditorGUILayout.Foldout(manager.FetchFoldOutList()[i], manager.FetchKeyList()[i]));
                 if (manager.FetchFoldOutList()[i])
                 {
@@ -130,7 +152,8 @@ namespace Subtegral.Localization.EditorScripts
         {
             list.onRemoveCallback = (ReorderableList list) =>
             {
-                manager.localizationLangs.RemoveAt(list.index);
+                // manager.localizationLangs.RemoveAt(list.index);
+                manager.RemoveLanguage(list.index);
                 CreateLanguageReordableList();
                 RegisterReordableListCallbacks();
             };
@@ -202,6 +225,8 @@ namespace Subtegral.Localization.EditorScripts
         int editLangIconIndex = -1;
         int editLangIndex = -1;
         bool isWordListOpen = false;
+        bool showSearchScreen = false;
+        string searchParameter = string.Empty;
     }
 
 }

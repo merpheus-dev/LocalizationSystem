@@ -23,6 +23,13 @@ namespace Subtegral.Localization.Controller
             return true;
         }
 
+        public void RemoveLanguage(int index)
+        {
+            Language target = localizationLangs[index];
+            localizationDicts.ForEach((x) => x.RemoveLanguage(target));
+            localizationLangs.RemoveAt(index);
+        }
+
         public bool AddWord(string keyWord)
         {
             if (localizationDicts.Exists((x) => x.Key == keyWord))
