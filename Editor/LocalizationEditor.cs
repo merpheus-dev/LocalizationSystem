@@ -8,7 +8,6 @@ using UnityEditorInternal;
 using System.Linq;
 using UnityEditor.IMGUI;
 using UnityEditor.IMGUI.Controls;
-using UnityEditor.AdvancedDropdown;
 namespace Subtegral.Localization.EditorScripts
 {
     public class LocalizationEditor : EditorWindow

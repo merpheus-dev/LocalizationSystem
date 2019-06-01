@@ -1,0 +1,7 @@
+Label{
+	font-size: 20;
+    font-weight: bold;
+    text-color: rgb(0,0,0);
+	border-left-width: 70;
+	border-top-width: 5;
+}
