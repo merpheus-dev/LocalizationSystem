@@ -8,9 +8,10 @@ using Ana;
 public class LanguageEditor : EditorWindow
 {
     private Label header;
+    private TextField keywordField;
+    private TextField valueField;
     private ReorderableList list;
     private int selected;
-
     [MenuItem("Local/Open")]
     public static void CreateWindow()
     {
@@ -30,6 +31,8 @@ public class LanguageEditor : EditorWindow
         });
         rootVisualElement.Add(imguiContainer);
         rootVisualElement.Add(uxmlVE);
+        keywordField = rootVisualElement.Q<TextField>("keywordHolder");
+        valueField = rootVisualElement.Q<TextField>("valueHolder");
 
         var lbl = new Label("zaa");
 
@@ -55,17 +58,14 @@ public class LanguageEditor : EditorWindow
         rootVisualElement.Q<Button>("zaa").RegisterCallback<MouseUpEvent>(e =>
         {
             var lng = Resources.Load<LanguageDictionary>("Lang");
-            lng.AddLangage("zaa", SystemLanguage.Turkish, null);
+            lng.NewLanguage(SystemLanguage.Turkish, "zaa");
         });
 
         rootVisualElement.Q<Button>("hello").RegisterCallback<MouseUpEvent>(e =>
         {
             var lng = Resources.Load<LanguageDictionary>("Lang");
-            lng.AddWordToLanguage(SystemLanguage.Turkish, new Word()
-            {
-                Key = "Anan",
-                Value = "Zaa"
-            });
+            lng.ChangeKeyWordValue(SystemLanguage.Turkish, keywordField.text, valueField.text);
         });
+
     }
 }

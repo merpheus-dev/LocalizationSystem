@@ -23,12 +23,23 @@ namespace Ana
     [Serializable]
     public class LanguageDict
     {
-        public Language Language;
-        public List<Word> Word;
-        public LanguageDict(Language language)
+        public Language Language { get; private set; }
+        public List<Word> WordList { get; private set; }
+
+        public static LanguageDict GetInstanceFromLanguage(Language language)
+        {
+            return new LanguageDict(language);
+        }
+
+        public void NewWord(Word word)
+        {
+            WordList.Add(word);
+        }
+
+        private LanguageDict(Language language)
         {
             Language = language;
-            Word = new List<Word>();
+            WordList = new List<Word>();
         }
     }
 
