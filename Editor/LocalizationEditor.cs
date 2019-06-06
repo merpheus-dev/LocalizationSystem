@@ -223,6 +223,7 @@ namespace Subtegral.Localization.EditorScripts
         LocalizationDataWindow dataWindow;
         int editLangIconIndex = -1;
         int editLangIndex = -1;
+#pragma warning disable
         bool isWordListOpen = false;
         bool showSearchScreen = false;
         string searchParameter = string.Empty;

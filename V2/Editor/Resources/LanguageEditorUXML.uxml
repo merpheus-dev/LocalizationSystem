@@ -13,8 +13,4 @@ xsi:schemaLocation="
 "
 >
   <engine:Label text="Localization" />
-  <engine:TextField text ="hello" name="keywordHolder" />
-  <engine:TextField text ="hello" name="valueHolder" />
-  <engine:Button text="Zaa" name ="zaa"/>
-  <engine:Button text="Hello" name="hello"/>
 </engine:UXML>

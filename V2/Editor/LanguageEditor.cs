@@ -5,11 +5,9 @@ using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEditorInternal;
 using Ana;
+using System.Collections.Generic;
 public class LanguageEditor : EditorWindow
 {
-    private Label header;
-    private TextField keywordField;
-    private TextField valueField;
     private ReorderableList list;
     private int selected;
     [MenuItem("Local/Open")]
@@ -20,18 +18,16 @@ public class LanguageEditor : EditorWindow
 
     private void OnEnable()
     {
-
-
-        var imguiContainer = new IMGUIContainer(() =>
-        {
-            EditorGUILayout.Space();
-            selected = GUILayout.Toolbar(selected, new string[] { "Language Controls", "Keywords" });
-        });
-        rootVisualElement.Add(imguiContainer);
-
+        rootVisualElement.styleSheets.Add(Resources.Load<StyleSheet>("LanguageEditor"));
+        var tabView = ViewFactory.GetInstance(View.TabView) as TabView;
+        rootVisualElement.Add(tabView);
         rootVisualElement.Add(ViewFactory.GetInstance(View.LanguagePage));
+        RegisterTabClicks(tabView);
+    }
 
-        imguiContainer.RegisterCallback<MouseUpEvent>(e =>
+    private void RegisterTabClicks(TabView tabView)
+    {
+        tabView.Container.RegisterCallback<MouseUpEvent>(e =>
         {
             selected = selected == 1 ? 0 : 1;
             if (selected == 1)
@@ -45,22 +41,6 @@ public class LanguageEditor : EditorWindow
                 rootVisualElement.Add(ViewFactory.GetInstance(View.LanguagePage));
             }
         });
-        AttachButtonAction();
     }
 
-    private void AttachButtonAction()
-    {
-        rootVisualElement.Q<Button>("zaa").RegisterCallback<MouseUpEvent>(e =>
-        {
-            var lng = Resources.Load<LanguageDictionary>("Lang");
-            lng.NewLanguage(SystemLanguage.Turkish, "zaa");
-        });
-
-        rootVisualElement.Q<Button>("hello").RegisterCallback<MouseUpEvent>(e =>
-        {
-            var lng = Resources.Load<LanguageDictionary>("Lang");
-            lng.ChangeKeyWordValue(SystemLanguage.Turkish, keywordField.text, valueField.text);
-        });
-
-    }
 }
