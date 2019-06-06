@@ -20,34 +20,29 @@ public class LanguageEditor : EditorWindow
 
     private void OnEnable()
     {
-        var visualTree = Resources.Load("LanguageEditorUXML") as VisualTreeAsset;
-        var uxmlVE = visualTree.CloneTree();
-        uxmlVE.styleSheets.Add(Resources.Load<StyleSheet>("LanguageEditor"));
+
 
         var imguiContainer = new IMGUIContainer(() =>
         {
             EditorGUILayout.Space();
-            selected = GUILayout.Toolbar(selected, new string[] { "Language Controls", "Key Words" });
+            selected = GUILayout.Toolbar(selected, new string[] { "Language Controls", "Keywords" });
         });
         rootVisualElement.Add(imguiContainer);
-        rootVisualElement.Add(uxmlVE);
-        keywordField = rootVisualElement.Q<TextField>("keywordHolder");
-        valueField = rootVisualElement.Q<TextField>("valueHolder");
 
-        var lbl = new Label("zaa");
+        rootVisualElement.Add(ViewFactory.GetInstance(View.LanguagePage));
 
         imguiContainer.RegisterCallback<MouseUpEvent>(e =>
         {
             selected = selected == 1 ? 0 : 1;
             if (selected == 1)
             {
-                rootVisualElement.Remove(uxmlVE);
-                rootVisualElement.Add(lbl);
+                rootVisualElement.Remove(ViewFactory.GetInstance(View.LanguagePage));
+                rootVisualElement.Add(ViewFactory.GetInstance(View.AddKeywordPage));
             }
             else
             {
-                rootVisualElement.Remove(lbl);
-                rootVisualElement.Add(uxmlVE);
+                rootVisualElement.Remove(ViewFactory.GetInstance(View.AddKeywordPage));
+                rootVisualElement.Add(ViewFactory.GetInstance(View.LanguagePage));
             }
         });
         AttachButtonAction();
